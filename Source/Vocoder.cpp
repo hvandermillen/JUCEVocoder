@@ -76,7 +76,7 @@ void Vocoder::Init(float sampleRate) {
 float Vocoder::Process(float modulatorInput, float carrierInput) {
     float out = 0;
     
-    for (int i = 0; i < 14; i++) {
+    for (int i = 0; i < numBands; i++) {
         out += bands[i].Process(modulatorInput, carrierInput) * 0.2;
     }
     return out; //CHANGE

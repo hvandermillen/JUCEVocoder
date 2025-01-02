@@ -53,7 +53,7 @@ public:
     float Process(float modulatorInput, float carrierInput);
 private:
     static constexpr int numBands = 16;
-    int frequencies[16] {125, 185, 270, 350, 430, 530, 630, 780, 950, 1150, 1380, 2070, 2780, 3800, 6400};
+    int frequencies[16] {125, 185, 270, 350, 430, 530, 630, 780, 950, 1150, 1380, 2070, 2780, 3800, 6400, 12800};
     VocoderBand bands[numBands];
     
 };
