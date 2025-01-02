@@ -95,6 +95,12 @@ void BasicVocoderAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
 {
     env = EnvelopeFollower();
     env.Init(20000,200000);
+    
+    bands[0].Init(sampleRate, 500);
+    bands[1].Init(sampleRate, 500);
+    
+    vocoders[0].Init(sampleRate);
+    vocoders[1].Init(sampleRate);
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 }
@@ -158,9 +164,11 @@ void BasicVocoderAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
         // ..do something to the data...
         
+        float whiteNoise = ((float)(rand()) / (float)(RAND_MAX)) * 2 - 1;
+        
         for (int i = 0; i < buffer.getNumSamples(); i++) {
-            env.Process(channelData[i]);
-            channelData[i] *= 0.5;
+            channelData[i] = vocoders[channel].Process(channelData[i],whiteNoise);
+            channelData[i] *= 2;
         }
     }
 }

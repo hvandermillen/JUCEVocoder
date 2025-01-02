@@ -13,7 +13,6 @@ void EnvelopeFollower::Init(int attack, int release) {
     this->level = 0;
 }
 
-
 //this should be improved later
 float EnvelopeFollower::Process(float input) {
     float absInput = std::abs(input);
@@ -53,11 +52,32 @@ void VocoderBand::Init(float sampleRate, float frequency) {
 }
 
 float VocoderBand::Process(float modulatorInput, float carrierInput) {
+    //filter input to isolate band
     float inputFiltered = analyzer.processSingleSampleRaw(modulatorInput);
     
     //process envelope follower to get level
-    float modulatorLevel = env.Process(modulatorInput);
-
+    float modulatorLevel = env.Process(inputFiltered);
     
-    return carrierInput; //CHANGE
+    //filter carrier and adjust level to match modulator
+    float outputFiltered = outFilter.processSingleSampleRaw(carrierInput);
+    float makeupGain = 10;
+    outputFiltered *= modulatorLevel * makeupGain;
+    
+    return outputFiltered; //CHANGE
+}
+
+void Vocoder::Init(float sampleRate) {
+    //inintialize all the bands
+    for (int i = 0; i < numBands; i++) {
+        bands[i].Init(sampleRate, frequencies[i]);
+    }
+}
+
+float Vocoder::Process(float modulatorInput, float carrierInput) {
+    float out = 0;
+    
+    for (int i = 0; i < 14; i++) {
+        out += bands[i].Process(modulatorInput, carrierInput) * 0.2;
+    }
+    return out; //CHANGE
 }

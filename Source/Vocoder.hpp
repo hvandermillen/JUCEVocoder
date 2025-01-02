@@ -15,9 +15,9 @@
 
 #endif /* Vocoder_hpp */
 
-#define ENV_ATTACK 500
-#define ENV_RELEASE 500
-#define Q 2
+#define ENV_ATTACK 1000
+#define ENV_RELEASE 1000
+#define Q 10
 
 
 class EnvelopeFollower {
@@ -49,7 +49,12 @@ private:
 
 class Vocoder {
 public:
+    void Init(float sampleRate);
+    float Process(float modulatorInput, float carrierInput);
 private:
+    static constexpr int numBands = 16;
+    int frequencies[16] {125, 185, 270, 350, 430, 530, 630, 780, 950, 1150, 1380, 2070, 2780, 3800, 6400};
+    VocoderBand bands[numBands];
     
 };
 

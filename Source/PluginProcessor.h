@@ -59,5 +59,7 @@ public:
 private:
     //==============================================================================
     EnvelopeFollower env;
+    VocoderBand bands[2];
+    Vocoder vocoders[2];
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BasicVocoderAudioProcessor)
 };
