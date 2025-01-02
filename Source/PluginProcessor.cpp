@@ -16,6 +16,7 @@ BasicVocoderAudioProcessor::BasicVocoderAudioProcessor()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
                        .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+                       .withInput  ("SideChain",  juce::AudioChannelSet::stereo(), true)
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
@@ -164,9 +165,10 @@ void BasicVocoderAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
         // ..do something to the data...
         
-        float whiteNoise = ((float)(rand()) / (float)(RAND_MAX)) * 2 - 1;
+//        float whiteNoise = ((float)(rand()) / (float)(RAND_MAX)) * 2 - 1;
         
         for (int i = 0; i < buffer.getNumSamples(); i++) {
+            float whiteNoise = ((float)(rand()) / (float)(RAND_MAX)) * 2 - 1;
             channelData[i] = vocoders[channel].Process(channelData[i],whiteNoise);
             channelData[i] *= 2;
         }

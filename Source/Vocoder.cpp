@@ -77,7 +77,12 @@ float Vocoder::Process(float modulatorInput, float carrierInput) {
     float out = 0;
     
     for (int i = 0; i < numBands; i++) {
-        out += bands[i].Process(modulatorInput, carrierInput) * 0.2;
+        out += bands[i].Process(modulatorInput, carrierInput) * 0.5 * log(i+1);
     }
     return out; //CHANGE
 }
+
+/*
+ The higher I set the buffer size, the worse it sounds!
+ Probably doing too much in that one loop
+ */

@@ -17,7 +17,7 @@
 
 #define ENV_ATTACK 1000
 #define ENV_RELEASE 1000
-#define Q 10
+#define Q 16
 
 
 class EnvelopeFollower {
