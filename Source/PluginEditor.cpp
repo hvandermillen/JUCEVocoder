@@ -30,7 +30,8 @@ void BasicVocoderAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    juce::String text = "Hello World!";
+    g.drawFittedText (std::to_string(audioProcessor.getEnvLevel()), getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void BasicVocoderAudioProcessorEditor::resized()

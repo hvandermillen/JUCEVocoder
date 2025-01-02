@@ -93,6 +93,8 @@ void BasicVocoderAudioProcessor::changeProgramName (int index, const juce::Strin
 //==============================================================================
 void BasicVocoderAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    env = EnvelopeFollower();
+    env.Init(20000,200000);
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 }
@@ -155,7 +157,16 @@ void BasicVocoderAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         auto* channelData = buffer.getWritePointer (channel);
 
         // ..do something to the data...
+        
+        for (int i = 0; i < buffer.getNumSamples(); i++) {
+            env.Process(channelData[i]);
+            channelData[i] *= 0.5;
+        }
     }
+}
+
+float BasicVocoderAudioProcessor::getEnvLevel() {
+    return env.getLevel();
 }
 
 //==============================================================================

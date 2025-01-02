@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Vocoder.hpp"
 
 //==============================================================================
 /**
@@ -48,6 +49,8 @@ public:
     void setCurrentProgram (int index) override;
     const juce::String getProgramName (int index) override;
     void changeProgramName (int index, const juce::String& newName) override;
+    
+    float getEnvLevel();
 
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
@@ -55,5 +58,6 @@ public:
 
 private:
     //==============================================================================
+    EnvelopeFollower env;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BasicVocoderAudioProcessor)
 };
