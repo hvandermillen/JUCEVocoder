@@ -34,9 +34,9 @@ BasicVocoderAudioProcessorEditor::BasicVocoderAudioProcessorEditor (BasicVocoder
     
     gainSlider.setBounds(border, getHeight()-border-100, dialWidth, dialHeight);
     mixSlider.setBounds(getWidth()-dialWidth-border, getHeight()-border-100, dialWidth, dialHeight);
-    gainTextArea.setBounds(gainSlider.getX()-dialWidth/4,gainSlider.getY()-10, dialWidth, 25);
-    mixTextArea.setBounds(mixSlider.getX()-dialWidth/4,mixSlider.getY()-10, dialWidth, 25);
-
+    gainTextArea.setBounds(gainSlider.getX(),gainSlider.getY()-15, dialWidth, 25);
+    mixTextArea.setBounds(mixSlider.getX(),mixSlider.getY()-15, dialWidth, 25);
+    
 }
 
 BasicVocoderAudioProcessorEditor::~BasicVocoderAudioProcessorEditor()
@@ -69,6 +69,9 @@ void BasicVocoderAudioProcessorEditor::resized()
     int dialWidth = getWidth() / 4 - border;
     int dialHeight = getHeight() / 2 - border - 30;
     
-    gainTextArea.setBounds(gainSlider.getX()-gainSlider.getWidth()/2,gainSlider.getY()-50, 100, 25);
-    mixTextArea.setBounds(mixSlider.getX()-mixSlider.getWidth()/2,mixSlider.getY()-50, 100, 25);
+    gainSlider.setBounds(border, getHeight()-border-100, dialWidth, dialHeight);
+    mixSlider.setBounds(getWidth()-dialWidth-border, getHeight()-border-100, dialWidth, dialHeight);
+    
+    gainTextArea.setBounds(gainSlider.getX(),gainSlider.getY()-15, 100, 25);
+    mixTextArea.setBounds(mixSlider.getX(),mixSlider.getY()-15, 100, 25);
 }
