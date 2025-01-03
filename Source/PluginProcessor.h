@@ -57,6 +57,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     juce::AudioVisualiserComponent waveViewer;
+    juce::AudioProcessorValueTreeState state;
 
 private:
     //==============================================================================

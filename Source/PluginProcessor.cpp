@@ -22,7 +22,11 @@ BasicVocoderAudioProcessor::BasicVocoderAudioProcessor()
                      #if ! JucePlugin_IsSynth
                        .withInput  ("SideChain",  juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), waveViewer(1)
+                       ), waveViewer(1),
+        state (*this, nullptr, "STATE", {
+            std::make_unique<juce::AudioParameterFloat>("gain", "Gain", 0.0f, 1.0f, 1.0f),
+            std::make_unique<juce::AudioParameterFloat>("mix", "Dry / Wet", 0.0f, 1.0f, 1.0f),
+        })
 #endif
 {
     waveViewer.setRepaintRate(30);
@@ -151,6 +155,9 @@ void BasicVocoderAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
+    
+    float gain = state.getParameter("gain")->getValue();
+    float mix = state.getParameter("mix")->getValue();
    
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -182,8 +189,11 @@ void BasicVocoderAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
                 carrierSample = buffer.getSample(3,i);
             else
                 carrierSample = ((float)(rand()) / (float)(RAND_MAX)) * 2 - 1;
-            channelData[i] = vocoders[channel].Process(channelData[i],carrierSample);
-            channelData[i] *= 2;
+            float drySignal = channelData[i];
+            float wetSignal = vocoders[channel].Process(channelData[i],carrierSample);
+            wetSignal *= 4;
+            channelData[i] = ((wetSignal * mix) + (drySignal * (1.0f-mix))) * gain;
+            
         }
     }
     waveViewer.pushBuffer(buffer);

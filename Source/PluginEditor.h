@@ -29,6 +29,11 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     BasicVocoderAudioProcessor& audioProcessor;
+    juce::Slider gainSlider, mixSlider;
+    juce::AudioProcessorValueTreeState::SliderAttachment gainAttachment, mixAttachment;
+    
+    juce::Rectangle<int> gainTextArea, mixTextArea;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BasicVocoderAudioProcessorEditor)
 };
