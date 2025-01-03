@@ -16,13 +16,17 @@ BasicVocoderAudioProcessor::BasicVocoderAudioProcessor()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
                        .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                       .withInput  ("SideChain",  juce::AudioChannelSet::stereo(), true)
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                     #if ! JucePlugin_IsSynth
+                       .withInput  ("SideChain",  juce::AudioChannelSet::stereo(), true)
+                     #endif
+                       ), waveViewer(1)
 #endif
 {
+    waveViewer.setRepaintRate(30);
+    waveViewer.setBufferSize(256);
 }
 
 BasicVocoderAudioProcessor::~BasicVocoderAudioProcessor()
@@ -141,9 +145,13 @@ bool BasicVocoderAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
 void BasicVocoderAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
+    
+    auto mainIO = getBusBuffer (buffer, true, 0);
+    auto sidechain = getBusBuffer (buffer, true,1);
+    
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-
+   
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -159,20 +167,26 @@ void BasicVocoderAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    for (int channel = 0; channel < mainIO.getNumChannels(); ++channel)
     {
-        auto* channelData = buffer.getWritePointer (channel);
+        auto* channelData = mainIO.getWritePointer (channel);
+        //should be sidechain.getReadPointer but that is not working
 
         // ..do something to the data...
         
 //        float whiteNoise = ((float)(rand()) / (float)(RAND_MAX)) * 2 - 1;
         
         for (int i = 0; i < buffer.getNumSamples(); i++) {
-            float whiteNoise = ((float)(rand()) / (float)(RAND_MAX)) * 2 - 1;
-            channelData[i] = vocoders[channel].Process(channelData[i],whiteNoise);
+            float carrierSample = 0;
+            if (getTotalNumInputChannels() > 2)
+                carrierSample = buffer.getSample(3,i);
+            else
+                carrierSample = ((float)(rand()) / (float)(RAND_MAX)) * 2 - 1;
+            channelData[i] = vocoders[channel].Process(channelData[i],carrierSample);
             channelData[i] *= 2;
         }
     }
+    waveViewer.pushBuffer(buffer);
 }
 
 float BasicVocoderAudioProcessor::getEnvLevel() {

@@ -16,6 +16,8 @@ BasicVocoderAudioProcessorEditor::BasicVocoderAudioProcessorEditor (BasicVocoder
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
+    addAndMakeVisible(audioProcessor.waveViewer);
+    audioProcessor.waveViewer.setColours(juce::Colours::black, juce::Colours::blueviolet.withAlpha(0.5f));
 }
 
 BasicVocoderAudioProcessorEditor::~BasicVocoderAudioProcessorEditor()
@@ -31,11 +33,12 @@ void BasicVocoderAudioProcessorEditor::paint (juce::Graphics& g)
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
     juce::String text = "Hello World!";
-    g.drawFittedText (std::to_string(audioProcessor.getEnvLevel()), getLocalBounds(), juce::Justification::centred, 1);
+    g.drawFittedText (std::to_string(audioProcessor.getTotalNumInputChannels()), getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void BasicVocoderAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
+    audioProcessor.waveViewer.setBounds(getLocalBounds().withSizeKeepingCentre(getWidth(),getHeight()));
 }
